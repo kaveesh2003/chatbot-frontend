@@ -1,4 +1,3 @@
-// src/components/ChatbotWindow.jsx
 import React, { useState } from "react";
 import MessageBubble from "./MessageBubble";
 import "../App.css";
@@ -13,7 +12,7 @@ const ChatbotWindow = () => {
     try {
       setIsLoading(true);
 
-      // 👇 Send message to Rasa backend (port 5005, not 5055)
+      // Send message to Rasa backend 
       const response = await fetch("http://localhost:5005/webhooks/rest/webhook", {
         method: "POST",
         headers: {
@@ -28,12 +27,12 @@ const ChatbotWindow = () => {
       const data = await response.json();
       console.log("Rasa Response:", data);
 
-      // 👇 Create user message
+      // Create user message
       const updatedMessages = [
         { sender: "user", text: message }
       ];
 
-      // 👇 Push each Rasa message to chat
+      // Push each Rasa message to chat
       data.forEach((msg) => {
         if (msg.text) {
           updatedMessages.push({ sender: "bot", text: msg.text });
@@ -46,7 +45,7 @@ const ChatbotWindow = () => {
       console.error("Error sending message:", error);
       setChatMessages((prevMessages) => [
         ...prevMessages,
-        { sender: "bot", text: "⚠️ Sorry, something went wrong while processing your message." }
+        { sender: "bot", text: "Sorry, something went wrong while processing your message." }
       ]);
     } finally {
       setIsLoading(false);
