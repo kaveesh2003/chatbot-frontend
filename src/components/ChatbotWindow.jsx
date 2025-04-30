@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import MessageBubble from "./MessageBubble";
 import "../App.css";
+import logo_tb from "../assets/logo_tb.png";
 
 const ChatbotWindow = () => {
   const [userInput, setUserInput] = useState("");
@@ -61,10 +62,18 @@ const ChatbotWindow = () => {
 
   return (
     <div className="chatbot-wrapper">
-      <h2 className="chatbot-header">Hi there! I'm Travel Buddy</h2>
+      <div className="chatbot-header-full">
+        <h2 className="chatbot-header">Hi there! I'm Travel Buddy....</h2>
+        <img className= "logo_travel" src={logo_tb} alt="logo"/>
+      </div>
       <div className="chatbot-container">
         <div className="chatbot-left">
           <div className="chat-display">
+          <div className="chatbot-right">
+          <div className="instruction-text">
+            <h2>How can I assist your Sri Lankan travel plans today?</h2>
+          </div>
+        </div>
             {chatMessages.map((msg, index) => (
               <MessageBubble
                 key={index}
@@ -90,18 +99,7 @@ const ChatbotWindow = () => {
           </div>
         </div>
 
-        <div className="chatbot-right">
-          <div className="info-box">
-            <p>
-              Ask me about beautiful destinations, top hotels, visa info, travel tips, and more. <br />
-              Let’s plan your perfect Sri Lankan getaway together!
-            </p>
-          </div>
-          <div className="instruction-text">
-            <h2>How can I assist your Sri Lanka travel plans today?</h2>
-            <p>Choose a topic below or type your question</p>
-          </div>
-        </div>
+        
       </div>
     </div>
   );
