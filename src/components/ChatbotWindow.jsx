@@ -11,10 +11,12 @@ const ChatbotWindow = () => {
   const sendMessage = async (message) => {
     try {
       setIsLoading(true);
-      const response = await fetch('http://localhost:5005/webhooks/rest/webhook', {
-        method: 'POST',
+
+      // 👇 Send message to Rasa backend (port 5005, not 5055)
+      const response = await fetch("http://localhost:5005/webhooks/rest/webhook", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           sender: "user1",
@@ -23,17 +25,28 @@ const ChatbotWindow = () => {
       });
 
       const data = await response.json();
-      console.log(data);
+      console.log("Rasa Response:", data);
 
-      const botReply = data.length > 0 ? data[0].text : "Sorry, I couldn't understand that.";
+      // 👇 Create user message
+      const updatedMessages = [
+        { sender: "user", text: message }
+      ];
 
-      setChatMessages(prevMessages => [
-        ...prevMessages,
-        { sender: "user", text: message },
-        { sender: "bot", text: botReply }
-      ]);
+      // 👇 Push each Rasa message to chat
+      data.forEach((msg) => {
+        if (msg.text) {
+          updatedMessages.push({ sender: "bot", text: msg.text });
+        }
+        // Optional: handle images, buttons here if needed
+      });
+
+      setChatMessages((prevMessages) => [...prevMessages, ...updatedMessages]);
     } catch (error) {
       console.error("Error sending message:", error);
+      setChatMessages((prevMessages) => [
+        ...prevMessages,
+        { sender: "bot", text: "⚠️ Sorry, something went wrong while processing your message." }
+      ]);
     } finally {
       setIsLoading(false);
     }
@@ -59,7 +72,7 @@ const ChatbotWindow = () => {
                 sender={msg.sender}
               />
             ))}
-            {isLoading && <div className="loading">Loading...</div>}
+            {isLoading && <div className="loading">Typing...</div>}
           </div>
 
           <div className="search-bar">
@@ -69,7 +82,7 @@ const ChatbotWindow = () => {
               placeholder="Ask me anything about traveling in Sri Lanka..."
               value={userInput}
               onChange={(e) => setUserInput(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+              onKeyDown={(e) => e.key === "Enter" && handleSend()}
             />
             <button className="search-btn" onClick={handleSend}>
               <span className="material-icons send">send</span>
